@@ -66,6 +66,9 @@ def job_list(request):
     salary = request.GET.get('salary')
     location = request.GET.get('location')
     duration = request.GET.get('duration')
+    category = request.GET.get('category')
+    if category:
+     jobs = jobs.filter(category=category)
 
     if query:
         jobs = jobs.filter(Q(title__icontains=query) | Q(description__icontains=query))

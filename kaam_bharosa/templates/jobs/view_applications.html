@@ -4,28 +4,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Applications - {{ job.title }}</title>
+  <link rel="icon" href="https://i.ibb.co/60P0S52T/kb.jpg" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .navbar img {
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 22px;
+      color: white;
+      gap: 10px;
+    }
+
+    .navbar-brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .navbar img.profile {
       width: 40px;
       height: 40px;
       border-radius: 50%;
       object-fit: cover;
     }
+
     .status-badge {
       font-size: 0.85rem;
       padding: 5px 10px;
       border-radius: 6px;
       display: inline-block;
     }
+
     .status-pending {
       background-color: #ffeeba;
       color: #856404;
     }
+
     .status-accepted {
       background-color: #d4edda;
       color: #155724;
     }
+
     .status-rejected {
       background-color: #f8d7da;
       color: #721c24;
@@ -36,89 +56,82 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary px-4">
-  <a class="navbar-brand fw-bold" href="/">KAAM BHAROSA</a>
+  <a class="navbar-brand" href="/">
+    <img src="https://i.ibb.co/60P0S52T/kb.jpg" alt="KB Logo">
+    Kaam Bharosa
+  </a>
   <div class="collapse navbar-collapse">
     <ul class="navbar-nav ms-auto align-items-center">
       {% if user.is_authenticated %}
-        <li class="nav-item text-white me-3">
-          👤 <strong>{{ user.username }}</strong>
-        </li>
+        <li class="nav-item text-white me-3">👤 <strong>{{ user.username }}</strong></li>
         {% if user.userprofile %}
-          <li class="nav-item text-white me-3">
-            📞 {{ user.userprofile.phone }}
-          </li>
-          <li class="nav-item text-white me-3">
-            🧑‍💼 {{ user.userprofile.get_role_display }}
-          </li>
+          <li class="nav-item text-white me-3">📞 {{ user.userprofile.phone }}</li>
+          <li class="nav-item text-white me-3">🧑‍💼 {{ user.userprofile.get_role_display }}</li>
           <li class="nav-item me-3">
-            <img src="{{ user.userprofile.profile_photo.url }}" alt="Profile" />
+            <img src="{{ user.userprofile.profile_photo.url }}" alt="Profile" class="profile" />
           </li>
         {% endif %}
         <li class="nav-item">
           <a href="{% url 'logout' %}" class="btn btn-light btn-sm">Logout</a>
         </li>
       {% else %}
-        <li class="nav-item me-2">
-          <a href="{% url 'login' %}" class="btn btn-light btn-sm">Login</a>
-        </li>
-        <li class="nav-item">
-          <a href="{% url 'signup' %}" class="btn btn-warning btn-sm">Sign Up</a>
-        </li>
+        <li class="nav-item me-2"><a href="{% url 'login' %}" class="btn btn-light btn-sm">Login</a></li>
+        <li class="nav-item"><a href="{% url 'signup' %}" class="btn btn-warning btn-sm">Sign Up</a></li>
       {% endif %}
     </ul>
   </div>
 </nav>
 
 <!-- Main Content -->
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="container ">
+  <div class="d-flex justify-content-between align-items-center ">
     <h2>Applications for: <span class="text-primary">{{ job.title }}</span></h2>
     <a href="{% url 'my_jobs' %}" class="btn btn-secondary">← Go Back</a>
   </div>
 
   {% if applications %}
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle">
-        <thead class="table-primary">
-          <tr>
-            <th>Username</th>
-            <th>Phone</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for app in applications %}
-          <tr>
-            <td>{{ app.applicant.username }}</td>
-            <td>{{ app.applicant.userprofile.phone }}</td>
-            <td>
-              {% if app.status == 'Pending' %}
-                <span class="status-badge status-pending">Pending</span>
-              {% elif app.status == 'Accepted' %}
-                <span class="status-badge status-accepted">Accepted</span>
-              {% else %}
-                <span class="status-badge status-rejected">Rejected</span>
+   <div class="table-responsive mt-4">
+  <table class="table table-hover table-bordered align-middle" style="font-size: 1.1rem; border: 1px solid #dee2e6;">
+    <thead class="table-primary text-center" style="font-size: 1.2rem;">
+      <tr>
+        <th style="padding: 15px;">👤 Username</th>
+        <th style="padding: 15px;">📞 Phone</th>
+        <th style="padding: 15px;">📋 Status</th>
+        <th style="padding: 15px;">⚙️ Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for app in applications %}
+      <tr style="vertical-align: middle;">
+        <td style="padding: 15px;">{{ app.applicant.username }}</td>
+        <td style="padding: 15px;">{{ app.applicant.userprofile.phone }}</td>
+        <td style="padding: 15px;" class="text-center">
+          {% if app.status == 'accepted' %}
+            <span class="status-badge status-accepted">Accepted</span>
+          {% elif app.status == 'pending' %}
+            <span class="status-badge status-pending">Pending</span>
+          {% else %}
+            <span class="status-badge status-rejected">Rejected</span>
+          {% endif %}
+        </td>
+        <td style="padding: 15px;">
+          <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="application_id" value="{{ app.id }}">
+            <div class="d-flex flex-column flex-md-row gap-2">
+              <button name="action" value="accept" class="btn btn-success btn-sm">✅ Accept</button>
+              <button name="action" value="reject" class="btn btn-danger btn-sm">❌ Reject</button>
+              {% if app.status == 'accepted' %}
+                <a href="{% url 'contact_applicant' app.id %}" class="btn btn-primary btn-sm">📩 Contact</a>
               {% endif %}
-            </td>
-            <td>
-             <form method="post" style="display:inline;">
- {% csrf_token %}
- <input type="hidden" name="application_id" value="{{ app.id }}">
-  <button name="action" value="accept" class="btn btn-success btn-sm me-2">Accept</button>
-  <button name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
-  {% if app.status == 'accepted' %}
- <a href="{% url 'contact_applicant' app.id %}" class="btn btn-primary btn-sm mt-2">Contact Each Other</a>
-{% endif %}
-
-</form>
-
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+            </div>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
   {% else %}
     <div class="alert alert-info text-center mt-4">
       No one has applied yet.

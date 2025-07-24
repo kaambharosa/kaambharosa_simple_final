@@ -4,112 +4,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post a Job</title>
-    <div id="google_translate_element"></div>
+  <title>Post a Job - Kaam Bharosa</title>
+  <link rel="icon" href="https://i.ibb.co/60P0S52T/kb.jpg" type="image/png">
 
-<script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-      pageLanguage: 'en',
-      includedLanguages: 'en,hi',
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    }, 'google_translate_element');
-  }
-</script>
+  <!-- Bootstrap (optional if using crispy forms with bootstrap) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <!-- Google Translate -->
+  <div id="google_translate_element"></div>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,hi',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-          
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom right, #6a0dad, #000000);
-      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f8;
+      color: #1e3a8a;
+      padding: 40px 15px;
     }
 
     .container {
-      max-width: 600px;
-      margin: 30px auto;
+      max-width: 650px;
+      margin: auto;
       background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 30px;
     }
 
     h1 {
       text-align: center;
-      color: #6a0dad;
+      font-size: 1.8rem;
+      font-weight: 700;
       margin-bottom: 25px;
+      color: #1e3a8a;
     }
 
     label {
-      display: block;
-      font-weight: bold;
+      font-weight: 600;
       margin-bottom: 6px;
-      color: #333;
+      display: block;
     }
 
-    input[type="text"],
-    input[type="number"],
-    textarea,
-    select {
+    input, textarea, select {
       width: 100%;
       padding: 10px;
-      margin-bottom: 16px;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
+      margin-bottom: 15px;
       font-size: 14px;
-      transition: border-color 0.3s ease;
     }
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: #6a0dad;
+    input:focus, textarea:focus, select:focus {
+      border-color: #10b981;
       outline: none;
     }
 
     button[type="submit"] {
       width: 100%;
-      background-color: #4caf50;
+      background-color: #10b981;
       color: white;
       padding: 12px;
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
 
     button[type="submit"]:hover {
-      background-color: #45a049;
+      background-color: #0f766e;
     }
 
     .detect-container {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
     .detect-btn {
-      background-color: #6a0dad;
+      background-color: #2563eb;
       color: white;
       border: none;
       padding: 10px 15px;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
+    }
+
+    .location-values {
+      font-size: 15px;
       margin-top: 10px;
     }
 
     .copy-btn {
-      padding: 6px 10px;
-      margin: 5px 5px;
-      border-radius: 4px;
-      color: white;
+      padding: 5px 10px;
+      margin-left: 5px;
+      border-radius: 6px;
+      font-size: 13px;
       border: none;
       cursor: pointer;
-      font-size: 14px;
+      color: white;
     }
 
     .copy-lat {
@@ -120,15 +122,9 @@
       background-color: green;
     }
 
-    .location-values {
-      font-size: 16px;
-      margin-top: 10px;
-    }
-
     @media (max-width: 600px) {
       .container {
-        margin: 15px;
-        padding: 15px;
+        padding: 20px;
       }
     }
   </style>
@@ -138,66 +134,45 @@
   <div class="container">
     <h1>Post a New Job</h1>
 
-    <!-- Location Section -->
     <div class="detect-container">
       <button class="detect-btn" onclick="getLocation()">📍 Detect Location</button>
-
       <div class="location-values">
         Latitude: <span id="latShow">--</span>
-        <button class="copy-btn copy-lat" onclick="copyText('latShow')">Copy Latitude</button><br>
+        <button class="copy-btn copy-lat" onclick="copyText('latShow')">Copy</button><br>
         Longitude: <span id="longShow">--</span>
-        <button class="copy-btn copy-long" onclick="copyText('longShow')">Copy Longitude</button>
+        <button class="copy-btn copy-long" onclick="copyText('longShow')">Copy</button>
       </div>
     </div>
 
-    <!-- Job Form -->
     <form method="post">
       {% csrf_token %}
 
-      <div>
-        <label>Job Title</label>
-        {{ form.title }}
-      </div>
+      <label>Job Title</label>
+      {{ form.title }}
 
-      <div>
-        <label>Description</label>
-        {{ form.description }}
-      </div>
+      <label>Description</label>
+      {{ form.description }}
 
-      <div>
-        <label>Category</label>
-        {{ form.category }}
-      </div>
+      <label>Category</label>
+      {{ form.category }}
 
-      <div>
-        <label>Manual Location (State > District > Village > Landmark)</label>
-        {{ form.location }}
-      </div>
+      <label>Manual Location (State > District > Village > Landmark)</label>
+      {{ form.location }}
 
-      <div>
-        <label>Latitude</label>
-        {{ form.latitude }}
-      </div>
+      <label>Latitude</label>
+      {{ form.latitude }}
 
-      <div>
-        <label>Longitude</label>
-        {{ form.longitude }}
-      </div>
+      <label>Longitude</label>
+      {{ form.longitude }}
 
-      <div>
-        <label>Salary</label>
-        {{ form.salary }}
-      </div>
+      <label>Salary</label>
+      {{ form.salary }}
 
-      <div>
-        <label>Duration (days)</label>
-        {{ form.duration_days }}
-      </div>
+      <label>Duration (days)</label>
+      {{ form.duration_days }}
 
-      <div>
-        <label>Number of Workers</label>
-        {{ form.number_of_workers }}
-      </div>
+      <label>Number of Workers</label>
+      {{ form.number_of_workers }}
 
       <button type="submit">Submit Job</button>
     </form>
@@ -212,10 +187,10 @@
             const long = position.coords.longitude.toFixed(6);
             document.getElementById("latShow").textContent = lat;
             document.getElementById("longShow").textContent = long;
-            alert("Location detected ✅");
+            alert("✅ Location detected");
           },
           function () {
-            alert("⚠️ Location access denied or failed.");
+            alert("⚠️ Location access denied.");
           }
         );
       } else {
